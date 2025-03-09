@@ -1,6 +1,9 @@
 # Built binary should not be checked in.
 dummy-service
 
+# Remove IDE files fully
+.idea
+
 coverage.txt
 
 # Created by https://www.toptal.com/developers/gitignore/api/vim,emacs,visualstudiocode,goland,macos,linux,windows
