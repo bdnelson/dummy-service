@@ -5,43 +5,34 @@ import "net/http"
 func CreateRouter() *http.ServeMux {
 	r := http.NewServeMux()
 
+	// Option routes with different pattern
 	r.HandleFunc("OPTION /{route...}", Success)
 	r.HandleFunc("OPTION /failure", BadRequest)
 	r.HandleFunc("OPTION /error", ReturnErrorCode)
 
-	r.HandleFunc("GET /success", Success)
-	r.HandleFunc("GET /notfound", NotFound)
-	r.HandleFunc("GET /error", BadRequest)
-	r.HandleFunc("GET /error/{code}", ReturnErrorCode)
-	r.HandleFunc("GET /timeout", TimeoutWithDuration)
-	r.HandleFunc("GET /timeout/{duration}", TimeoutWithDuration)
+	// Define routes as data structures
+	type Route struct {
+		pattern string
+		handler http.HandlerFunc
+	}
 
-	r.HandleFunc("POST /success", Success)
-	r.HandleFunc("POST /notfound", NotFound)
-	r.HandleFunc("POST /error", BadRequest)
-	r.HandleFunc("POST /error/{code}", ReturnErrorCode)
-	r.HandleFunc("POST /timeout", TimeoutWithDuration)
-	r.HandleFunc("POST /timeout/{duration}", TimeoutWithDuration)
+	routes := []Route{
+		{"/success", Success},
+		{"/notfound", NotFound},
+		{"/error", BadRequest},
+		{"/error/{code}", ReturnErrorCode},
+		{"/timeout", TimeoutWithDuration},
+		{"/timeout/{duration}", TimeoutWithDuration},
+	}
 
-	r.HandleFunc("PUT /success", Success)
-	r.HandleFunc("PUT /notfound", NotFound)
-	r.HandleFunc("PUT /error", BadRequest)
-	r.HandleFunc("PUT /error/{code}", ReturnErrorCode)
-	r.HandleFunc("PUT /timeout", TimeoutWithDuration)
-	r.HandleFunc("PUT /timeout/{duration}", TimeoutWithDuration)
+	methods := []string{"GET", "POST", "PUT", "PATCH", "DELETE"}
 
-	r.HandleFunc("PATCH /success", Success)
-	r.HandleFunc("PATCH /notfound", NotFound)
-	r.HandleFunc("PATCH /error", BadRequest)
-	r.HandleFunc("PATCH /error/{code}", ReturnErrorCode)
-	r.HandleFunc("PATCH /timeout", TimeoutWithDuration)
-	r.HandleFunc("PATCH /timeout/{duration}", TimeoutWithDuration)
+	// Register all routes for all methods
+	for _, route := range routes {
+		for _, method := range methods {
+			r.HandleFunc(method+" "+route.pattern, route.handler)
+		}
+	}
 
-	r.HandleFunc("DELETE /success", Success)
-	r.HandleFunc("DELETE /notfound", NotFound)
-	r.HandleFunc("DELETE /error", BadRequest)
-	r.HandleFunc("DELETE /error/{code}", ReturnErrorCode)
-	r.HandleFunc("DELETE /timeout", TimeoutWithDuration)
-	r.HandleFunc("DELETE /timeout/{duration}", TimeoutWithDuration)
 	return r
 }

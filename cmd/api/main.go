@@ -49,6 +49,7 @@ func (lw *logWriter) WriteHeader(code int) {
 // Unwrap supports http.ResponseController.
 func (lw *logWriter) Unwrap() http.ResponseWriter { return lw.ResponseWriter }
 
+// wrap returns an http.Handler that logs the HTTP status code and the request path for each request.
 func wrap(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		lw := &logWriter{w, http.StatusOK}
